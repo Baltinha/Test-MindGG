@@ -3,7 +3,15 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - 'Salmon Dot  '
+  - 'Yellow Dot  '
+  - 'Teal Dot '
+  - 'Red Dot '
+  - Purple Dot
+  - 'Orage Dot '
+  - 'Indigo Dot '
+  - 'Bright Blue Dot '
   layers:
   - Default
   - TransparentFX

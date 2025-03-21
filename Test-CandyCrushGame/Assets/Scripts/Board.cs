@@ -38,9 +38,9 @@ public class Board : MonoBehaviour
             for (int j = 0; j < m_height; j++) 
             {
                 Vector2 tempPosition = new Vector2(i, j);
-                GameObject backGroundTile = Instantiate(TilePrefab, tempPosition, Quaternion.identity) as GameObject;
+                /*GameObject backGroundTile = Instantiate(TilePrefab, tempPosition, Quaternion.identity) as GameObject;
                 backGroundTile.transform.parent = transform;
-                backGroundTile.name = "( " + i + "," + j + ")";
+                backGroundTile.name = "( " + i + "," + j + ")";*/
                 int dotToUse = Random.Range(0, m_dots.Length);
                 GameObject dot = Instantiate(m_dots[dotToUse], tempPosition, Quaternion.identity);
                 dot.transform.parent = this.transform;

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5527375320347094890}
   m_Layer: 0
   m_Name: 'Teal Dot '
-  m_TagString: Untagged
+  m_TagString: 'Teal Dot '
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133,4 +133,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 411cee7beed81b842b0680cfb1dba475, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_colunm: 0
+  m_row: 0
+  m_targetX: 0
+  m_targetY: 0
   m_swipeAngle: 0
