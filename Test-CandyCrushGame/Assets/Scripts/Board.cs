@@ -13,6 +13,11 @@ public class Board : MonoBehaviour
 
     public GameObject TilePrefab;
 
+    public GameObject [,] AllDots { get =>m_allDots; }
+
+    public int Width { get => m_width; }
+    public int Height { get => m_height; }
+
     // Start is called before the first frame update
     void Start()
     {
