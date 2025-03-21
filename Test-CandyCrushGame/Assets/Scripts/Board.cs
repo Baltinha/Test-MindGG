@@ -6,7 +6,9 @@ public class Board : MonoBehaviour
 {
     [SerializeField]private int m_width;
     [SerializeField] private int m_height;
-    private BackgroundTile[,] m_tiles;
+    private BackgroundTile[,] m_allTiles;
+    private GameObject[,] m_allDots;
+    [SerializeField]private GameObject[] m_dots;
 
 
     public GameObject TilePrefab;
@@ -14,7 +16,8 @@ public class Board : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       m_tiles = new BackgroundTile[m_width, m_height]; 
+       m_allTiles = new BackgroundTile[m_width, m_height];
+       m_allDots = new GameObject[m_width, m_height];
        SetUp();
     }
 
@@ -33,6 +36,11 @@ public class Board : MonoBehaviour
                 GameObject backGroundTile = Instantiate(TilePrefab, tempPosition, Quaternion.identity) as GameObject;
                 backGroundTile.transform.parent = transform;
                 backGroundTile.name = "( " + i + "," + j + ")";
+                int dotToUse = Random.Range(0, m_dots.Length);
+                GameObject dot = Instantiate(m_dots[dotToUse], tempPosition, Quaternion.identity);
+                dot.transform.parent = this.transform;
+                dot.name = "( " + i + "," + j + ")";
+                m_allDots[i,j] = dot;
             }
         }
     }
