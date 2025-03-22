@@ -135,6 +135,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_colunm: 0
   m_row: 0
+  m_previousRow: 0
+  m_previousColunm: 0
   m_targetX: 0
   m_targetY: 0
+  m_lerpVelocity: 0.6
   m_swipeAngle: 0
