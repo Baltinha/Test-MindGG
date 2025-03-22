@@ -142,3 +142,7 @@ MonoBehaviour:
   m_lerpVelocity: 0.6
   m_swipeAngle: 0
   m_canMoveT: 0.3
+  m_columnBomb: 0
+  m_rowBomb: 0
+  rowArrow: {fileID: 8533819777292122341, guid: 246e60dcb6b987a439390428a25d0344, type: 3}
+  columnArrow: {fileID: 6958607281501915763, guid: 149835c81f553f045ad26a99d8daeb30, type: 3}

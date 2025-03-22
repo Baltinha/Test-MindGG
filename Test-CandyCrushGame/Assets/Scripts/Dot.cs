@@ -7,9 +7,9 @@ public class Dot : MonoBehaviour
 {
     [Header("Board Variables")]
     [SerializeField] private int m_colunm, m_row;
-    [SerializeField] private int m_previousRow, m_previousColunm;
-    [SerializeField] private int m_targetX;
-    [SerializeField] private int m_targetY;
+    [SerializeField] int m_previousRow, m_previousColunm;
+    [SerializeField] int m_targetX;
+    [SerializeField] int m_targetY;
     private bool m_mactched;
     private Board m_board;
 
@@ -18,14 +18,24 @@ public class Dot : MonoBehaviour
     private Vector2 m_fristPositionTouch;
     private Vector2 m_finalDirectionTouch;
     private Vector2 m_tempTargetPos;
-    [SerializeField]private float m_lerpVelocity = 0;
-    [SerializeField]private float m_swipeAngle = 0;
-    [SerializeField]private float m_canMoveT = 0;
-    private  float m_swipeResist = 1f;
+    private float m_swipeResist = 1f;
+    [SerializeField] float m_lerpVelocity = 0;
+    [SerializeField] float m_swipeAngle = 0;
+    [SerializeField] float m_canMoveT = 0;
+    
 
     [Header("FindMatches")]
     private FindMatches m_findMatches;
 
+    [Header("PowerUps")]
+    [SerializeField] bool m_columnBomb;
+    [SerializeField] bool m_rowBomb;
+    [SerializeField] GameObject rowArrow;
+    [SerializeField] GameObject columnArrow;
+
+    #region Gets and Set
+    public bool ColumnBomb { get => m_columnBomb; set => m_columnBomb = value; }
+    public bool RowBomb { get => m_rowBomb; set => m_rowBomb = value; }
     public bool Mactched { get => m_mactched; set => m_mactched = value; }
     public int PreviousRow { get => m_previousRow; }
 
@@ -35,9 +45,13 @@ public class Dot : MonoBehaviour
 
     public int Colunm { get => m_colunm; set => m_colunm = value; }
 
+    #endregion
+
     // Start is called before the first frame update
     void Start()
     {
+        m_columnBomb = false;
+        m_rowBomb = false;
         m_findMatches = FindAnyObjectByType<FindMatches>();
         m_board = FindAnyObjectByType<Board>();
         //m_targetX = (int)transform.position.x;
@@ -46,6 +60,17 @@ public class Dot : MonoBehaviour
         //m_colunm = m_targetX;
         //m_previousColunm = m_colunm;
         //m_previousRow = m_row;
+    }
+
+    //Isso e para testa e debugar
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            m_rowBomb = true;
+            GameObject arrow = Instantiate(rowArrow, transform.position, Quaternion.identity);
+            arrow.transform.parent = this.transform;
+        }
     }
 
     // Update is called once per frame
