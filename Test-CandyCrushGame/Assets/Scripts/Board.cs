@@ -3,25 +3,34 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum GamesState 
+{
+    wait,
+    move
+}
 public class Board : MonoBehaviour
 {
+    [SerializeField]private GamesState m_state = GamesState.move;
     [SerializeField]private int m_width;
-    [SerializeField] private int m_height;
+    [SerializeField]private int m_height;
+    [SerializeField]private int m_offset;
+    [SerializeField]private GameObject m_destroyEffect;
     private BackgroundTile[,] m_allTiles;
     private GameObject[,] m_allDots;
+    private FindMatches m_findMatches;
     [SerializeField]private GameObject[] m_dots;
 
 
     public GameObject TilePrefab;
-
     public GameObject [,] AllDots { get =>m_allDots; }
-
     public int Width { get => m_width; }
     public int Height { get => m_height; }
+    public GamesState State { get => m_state; set => m_state = value; }
 
     // Start is called before the first frame update
     void Start()
     {
+       m_findMatches = FindFirstObjectByType<FindMatches>();
        m_allTiles = new BackgroundTile[m_width, m_height];
        m_allDots = new GameObject[m_width, m_height];
        SetUp();
@@ -33,7 +42,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < m_height; j++) 
             {
-                Vector2 tempPosition = new Vector2(i, j);
+                Vector2 tempPosition = new Vector2(i, j + m_offset);
                 /*GameObject backGroundTile = Instantiate(TilePrefab, tempPosition, Quaternion.identity) as GameObject;
                 backGroundTile.transform.parent = transform;
                 backGroundTile.name = "( " + i + "," + j + ")";*/
@@ -44,6 +53,9 @@ public class Board : MonoBehaviour
                     
                 }
                 GameObject dot = Instantiate(m_dots[dotToUse], tempPosition, Quaternion.identity);
+                dot.GetComponent<Dot>().Row = j;
+                dot.GetComponent<Dot>().Colunm = i;
+
                 dot.transform.parent = this.transform;
                 dot.name = "( " + i + "," + j + ")";
                 m_allDots[i,j] = dot;
@@ -76,6 +88,9 @@ public class Board : MonoBehaviour
     {
         if (m_allDots[Column, Row].GetComponent<Dot>().Mactched)
         {
+            m_findMatches.CurrentMatches.Remove(m_allDots[Column,Row]);
+            GameObject Particle = Instantiate(m_destroyEffect, m_allDots[Column, Row].transform.position, Quaternion.identity);
+            Destroy(Particle,.5f);
             Destroy(m_allDots[Column, Row]);
             m_allDots[Column, Row] = null;
         }
@@ -128,10 +143,12 @@ public class Board : MonoBehaviour
             {
                 if (m_allDots[i,j] == null)
                 {
-                    Vector2 tempPosition = new Vector2(i,j);
+                    Vector2 tempPosition = new Vector2(i,j + m_offset);
                     int dotToUse = Random.Range(0, m_dots.Length);
                     GameObject piece = Instantiate(m_dots[dotToUse], tempPosition, Quaternion.identity);
                     m_allDots[i,j] = piece;
+                    piece.GetComponent<Dot>().Row = j;
+                    piece.GetComponent<Dot>().Colunm = i;
                 }
             }
         }
@@ -165,6 +182,8 @@ public class Board : MonoBehaviour
             yield return new WaitForSeconds(.5f);
             DestroyMetches();
         }
+        yield return new WaitForSeconds(.5f);
+        m_state = GamesState.move;
     }
 
 }

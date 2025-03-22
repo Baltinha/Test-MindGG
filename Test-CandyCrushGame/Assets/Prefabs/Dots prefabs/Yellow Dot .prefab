@@ -141,3 +141,4 @@ MonoBehaviour:
   m_targetY: 0
   m_lerpVelocity: 0.6
   m_swipeAngle: 0
+  m_canMoveT: 0.3

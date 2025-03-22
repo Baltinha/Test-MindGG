@@ -20,10 +20,13 @@ public class Dot : MonoBehaviour
     private Vector2 m_tempTargetPos;
     [SerializeField]private float m_lerpVelocity = 0;
     [SerializeField]private float m_swipeAngle = 0;
+    [SerializeField]private float m_canMoveT = 0;
     private  float m_swipeResist = 1f;
-    private int row;
 
-    public bool Mactched { get => m_mactched; }
+    [Header("FindMatches")]
+    private FindMatches m_findMatches;
+
+    public bool Mactched { get => m_mactched; set => m_mactched = value; }
     public int PreviousRow { get => m_previousRow; }
 
     public int Row { get => m_row; set => m_row = value; }
@@ -35,13 +38,14 @@ public class Dot : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        m_findMatches = FindAnyObjectByType<FindMatches>();
         m_board = FindAnyObjectByType<Board>();
-        m_targetX = (int)transform.position.x;
-        m_targetY = (int)transform.position.y;
-        m_row = m_targetY;
-        m_colunm = m_targetX;
-        m_previousColunm = m_colunm;
-        m_previousRow = m_row;
+        //m_targetX = (int)transform.position.x;
+        //m_targetY = (int)transform.position.y;
+        //m_row = m_targetY;
+        //m_colunm = m_targetX;
+        //m_previousColunm = m_colunm;
+        //m_previousRow = m_row;
     }
 
     // Update is called once per frame
@@ -50,8 +54,6 @@ public class Dot : MonoBehaviour
         m_targetX = m_colunm;
         m_targetY = m_row;
 
-
-        FindMeches();
         if (m_mactched) 
         {
             SpriteRenderer mySprite = GetComponent<SpriteRenderer>();
@@ -72,24 +74,31 @@ public class Dot : MonoBehaviour
                 m_otherDot.GetComponent<Dot>().m_colunm = m_colunm;
                 m_row = m_previousRow;
                 m_colunm = m_previousColunm;
+                yield return new WaitForSeconds(m_canMoveT);
+                m_board.State = GamesState.move;
             }
-                    else 
-        {
-            m_board.DestroyMetches();
-        }
+            else 
+            {
+                m_board.DestroyMetches();
+            }
+
             m_otherDot = null;
         }
 
     }
     private void OnMouseDown()
     {
-        m_fristPositionTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //Debug.Log(m_fristPositionTouch);
+        if (m_board.State == GamesState.move)
+            m_fristPositionTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
     private void OnMouseUp()
     {
-        m_finalDirectionTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        CalculeteAngle();
+        if (m_board.State == GamesState.move)
+        {
+            m_finalDirectionTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            CalculeteAngle();
+        }
+
     }
 
     void CalculeteAngle()
@@ -99,6 +108,11 @@ public class Dot : MonoBehaviour
         {
             m_swipeAngle = Mathf.Atan2(m_finalDirectionTouch.y - m_fristPositionTouch.y, m_finalDirectionTouch.x - m_fristPositionTouch.x) * 180 / Mathf.PI;
             MovePieces();
+            m_board.State = GamesState.wait;
+        }
+        else
+        {
+            m_board.State = GamesState.move;
         }
 
     }
@@ -109,6 +123,8 @@ public class Dot : MonoBehaviour
         {
             //Mexer para esquerda
             m_otherDot = m_board.AllDots[m_colunm + 1, m_row];
+            m_previousRow = m_row;
+            m_previousColunm = m_colunm;
             m_otherDot.GetComponent<Dot>().m_colunm -= 1;
             m_colunm += 1;
             
@@ -117,6 +133,8 @@ public class Dot : MonoBehaviour
         {
             //Mexer para cima
             m_otherDot = m_board.AllDots[m_colunm, m_row +1];
+            m_previousRow = m_row;
+            m_previousColunm = m_colunm;
             m_otherDot.GetComponent<Dot>().m_row -= 1;
             m_row += 1;
             
@@ -125,6 +143,8 @@ public class Dot : MonoBehaviour
         {
             //Mexer para direita
             m_otherDot = m_board.AllDots[m_colunm - 1, m_row];
+            m_previousRow = m_row;
+            m_previousColunm = m_colunm;
             m_otherDot.GetComponent<Dot>().m_colunm += 1;
             m_colunm -= 1;
             
@@ -133,6 +153,8 @@ public class Dot : MonoBehaviour
         {
             //Mexer para baixo
             m_otherDot = m_board.AllDots[m_colunm, m_row-1];
+            m_previousRow = m_row;
+            m_previousColunm = m_colunm;
             m_otherDot.GetComponent<Dot>().m_row += 1;
             m_row -= 1;
             
@@ -151,6 +173,7 @@ public class Dot : MonoBehaviour
             {
                 m_board.AllDots[m_colunm, m_row] = this.gameObject;
             }
+            m_findMatches.FindAllMatches();
         }else{
 
             //Coloca a possição para a direto
@@ -166,6 +189,7 @@ public class Dot : MonoBehaviour
             {
                 m_board.AllDots[m_colunm, m_row] = this.gameObject;
             }
+            m_findMatches.FindAllMatches();
         }
         else{
 
@@ -175,37 +199,5 @@ public class Dot : MonoBehaviour
         }
     }
 
-    void FindMeches() 
-    {
-        if (m_colunm > 0 && m_colunm < m_board.Width -1) 
-        {
-            GameObject leftDot1 = m_board.AllDots[m_colunm - 1, m_row];
-            GameObject rightDot1 = m_board.AllDots[m_colunm + 1, m_row];
-            if (leftDot1 != null && rightDot1 != null)
-            {
-                if (leftDot1.tag == this.gameObject.tag && rightDot1.tag == this.gameObject.tag)
-                {
-                    leftDot1.GetComponent<Dot>().m_mactched = true;
-                    rightDot1.GetComponent<Dot>().m_mactched = true;
-                    m_mactched = true;
-                }
-            }
-        }
 
-        if (m_row > 0 && m_row < m_board.Height - 1)
-        {
-            GameObject upDot1 = m_board.AllDots[m_colunm , m_row + 1];
-            GameObject downDot1 = m_board.AllDots[m_colunm, m_row -1];
-
-            if (upDot1 != null && downDot1 != null)
-            {
-                if (upDot1.tag == this.gameObject.tag && downDot1.tag == this.gameObject.tag)
-                {
-                    upDot1.GetComponent<Dot>().m_mactched = true;
-                    downDot1.GetComponent<Dot>().m_mactched = true;
-                    m_mactched = true;
-                }
-            }
-        }
-    }
 }
