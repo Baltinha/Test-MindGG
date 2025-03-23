@@ -15,10 +15,12 @@ public class Board : MonoBehaviour
     [SerializeField]private int m_height;
     [SerializeField]private int m_offset;
     [SerializeField]private GameObject m_destroyEffect;
+    [SerializeField]private GameObject[] m_dots;
     private BackgroundTile[,] m_allTiles;
     private GameObject[,] m_allDots;
+    [SerializeField]Dot m_currentDot;
     private FindMatches m_findMatches;
-    [SerializeField]private GameObject[] m_dots;
+    
 
 
     public GameObject TilePrefab;
@@ -26,6 +28,8 @@ public class Board : MonoBehaviour
     public int Width { get => m_width; }
     public int Height { get => m_height; }
     public GamesState State { get => m_state; set => m_state = value; }
+
+    public Dot CurrentDot { get => m_currentDot; set => m_currentDot = value; }
 
     // Start is called before the first frame update
     void Start()
@@ -50,7 +54,6 @@ public class Board : MonoBehaviour
                 while (MatchesAt(i, j, m_dots[dotToUse]) ) 
                 {
                     dotToUse = Random.Range(0, m_dots.Length);
-                    
                 }
                 GameObject dot = Instantiate(m_dots[dotToUse], tempPosition, Quaternion.identity);
                 dot.GetComponent<Dot>().Row = j;
@@ -68,17 +71,17 @@ public class Board : MonoBehaviour
     {
         if (Colunm > 1) 
         {
-            if (m_allDots[Colunm -1 , Row].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag && m_allDots[Colunm - 2, Row].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag)
-            {
+            if (m_allDots[Colunm -1 , Row].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag
+                && m_allDots[Colunm - 2, Row].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag)
                 return true;
-            }
+            
         }
         if (Row > 1) 
         {
-            if (m_allDots[Colunm, Row - 1].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag && m_allDots[Colunm, Row - 2].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag)
-            {
+            if (m_allDots[Colunm, Row - 1].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag 
+                && m_allDots[Colunm, Row - 2].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag)
                 return true;
-            }
+            
         }
 
         return false;
@@ -88,6 +91,8 @@ public class Board : MonoBehaviour
     {
         if (m_allDots[Column, Row].GetComponent<Dot>().Mactched)
         {
+            if (m_findMatches.CurrentMatches.Count == 4 || m_findMatches.CurrentMatches.Count == 7) 
+                m_findMatches.CheckBombs();
             m_findMatches.CurrentMatches.Remove(m_allDots[Column,Row]);
             GameObject Particle = Instantiate(m_destroyEffect, m_allDots[Column, Row].transform.position, Quaternion.identity);
             Destroy(Particle,.5f);
@@ -103,9 +108,7 @@ public class Board : MonoBehaviour
             for (int j=0; j < m_height; j++) 
             {
                 if (m_allDots[i,j] != null)
-                {
                     DestroyMatchesAt(i, j);
-                }
             }
         }
        StartCoroutine(DecreaseRowCo());
@@ -120,9 +123,8 @@ public class Board : MonoBehaviour
             for (int j = 0; j < m_height; j++)
             {
                 if (m_allDots[i,j]== null)
-                {
                     nullCount++;
-                }
+
                 else if (nullCount > 0)
                 {
                     m_allDots[i, j].GetComponent<Dot>().Row -= nullCount;
@@ -163,9 +165,8 @@ public class Board : MonoBehaviour
                 if (m_allDots[i, j] != null)
                 {
                     if (m_allDots[i,j].GetComponent<Dot>().Mactched)
-                    {
                         return true;
-                    }
+                    
                 }
             }
         }
@@ -182,6 +183,7 @@ public class Board : MonoBehaviour
             yield return new WaitForSeconds(.5f);
             DestroyMetches();
         }
+        m_findMatches.CurrentMatches.Clear();
         yield return new WaitForSeconds(.5f);
         m_state = GamesState.move;
     }

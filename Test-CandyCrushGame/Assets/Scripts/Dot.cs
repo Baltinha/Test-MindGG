@@ -45,6 +45,7 @@ public class Dot : MonoBehaviour
 
     public int Colunm { get => m_colunm; set => m_colunm = value; }
 
+    public GameObject OntherDot { get => m_otherDot; set => m_otherDot = value; }
     #endregion
 
     // Start is called before the first frame update
@@ -54,12 +55,6 @@ public class Dot : MonoBehaviour
         m_rowBomb = false;
         m_findMatches = FindAnyObjectByType<FindMatches>();
         m_board = FindAnyObjectByType<Board>();
-        //m_targetX = (int)transform.position.x;
-        //m_targetY = (int)transform.position.y;
-        //m_row = m_targetY;
-        //m_colunm = m_targetX;
-        //m_previousColunm = m_colunm;
-        //m_previousRow = m_row;
     }
 
     //Isso e para testa e debugar
@@ -78,12 +73,6 @@ public class Dot : MonoBehaviour
     {
         m_targetX = m_colunm;
         m_targetY = m_row;
-
-        if (m_mactched) 
-        {
-            SpriteRenderer mySprite = GetComponent<SpriteRenderer>();
-            mySprite.color = new Color(1f, 1f, 1f, 2f);
-        }
         MovingDots();
 
     }
@@ -100,6 +89,7 @@ public class Dot : MonoBehaviour
                 m_row = m_previousRow;
                 m_colunm = m_previousColunm;
                 yield return new WaitForSeconds(m_canMoveT);
+                m_board.CurrentDot = null;
                 m_board.State = GamesState.move;
             }
             else 
@@ -107,7 +97,7 @@ public class Dot : MonoBehaviour
                 m_board.DestroyMetches();
             }
 
-            m_otherDot = null;
+            //m_otherDot = null;
         }
 
     }
@@ -134,6 +124,7 @@ public class Dot : MonoBehaviour
             m_swipeAngle = Mathf.Atan2(m_finalDirectionTouch.y - m_fristPositionTouch.y, m_finalDirectionTouch.x - m_fristPositionTouch.x) * 180 / Mathf.PI;
             MovePieces();
             m_board.State = GamesState.wait;
+            m_board.CurrentDot = this;
         }
         else
         {
@@ -224,5 +215,17 @@ public class Dot : MonoBehaviour
         }
     }
 
+    public void MakeRowBomb() 
+    {
+        m_rowBomb = true;
+        GameObject arrow = Instantiate(rowArrow, transform.position, Quaternion.identity);
+        arrow.transform.parent = this.transform;
+    }
 
+    public void MakeColumnBomb() 
+    {
+        m_columnBomb = true;
+        GameObject arrow = Instantiate(columnArrow, transform.position, Quaternion.identity);
+        arrow.transform.parent = this.transform;
+    }
 }

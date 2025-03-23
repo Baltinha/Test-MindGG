@@ -110,4 +110,28 @@ public class FindMatches : MonoBehaviour
         }
         return Dots;
     }
+
+    public void CheckBombs() 
+    {
+        if (m_board.CurrentDot != null)
+        {
+            if (m_board.CurrentDot.Mactched)
+            {
+                m_board.CurrentDot.Mactched = false;
+                int typeOfBomb = Random.Range(0, 100);
+                if (typeOfBomb <50)
+                {
+                    m_board.CurrentDot.MakeRowBomb();
+                }
+                else if (typeOfBomb >= 50)
+                {
+                    m_board.CurrentDot.MakeColumnBomb();
+                }
+            }
+            else if (m_board.CurrentDot.OntherDot != null)
+            {
+
+            }
+        }
+    }
 }
