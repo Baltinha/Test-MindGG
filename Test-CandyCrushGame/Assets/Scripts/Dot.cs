@@ -57,7 +57,23 @@ public class Dot : MonoBehaviour
         m_board = FindAnyObjectByType<Board>();
     }
 
-
+    //Isso e para testa e debugar
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            m_columnBomb = true;
+            GameObject arrow = Instantiate(m_columnArrow, transform.position, Quaternion.identity);
+            arrow.transform.parent = this.transform;
+        }
+        /*if (Input.GetMouseButtonDown(1))
+        {
+            m_iscolorBomb = true;
+            GameObject color = Instantiate(m_colorBomb, transform.position, Quaternion.identity);
+            color.transform.parent = this.transform;
+            m_board.AllDots[m_colunm, m_row].tag = "Rainbow Bomb";
+        }*/
+    }
 
     // Update is called once per frame
     void Update()

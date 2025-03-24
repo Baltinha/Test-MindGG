@@ -10,10 +10,12 @@ public enum GamesState
 }
 public class Board : MonoBehaviour
 {
+    [Header("Board Size")]
     [SerializeField]private GamesState m_state = GamesState.move;
     [SerializeField]private int m_width;
     [SerializeField]private int m_height;
     [SerializeField]private int m_offset;
+    [SerializeField]GameObject m_tilePrefab;
     [SerializeField]private GameObject m_destroyEffect;
     [SerializeField]private GameObject[] m_dots;
     private BackgroundTile[,] m_allTiles;
@@ -23,7 +25,6 @@ public class Board : MonoBehaviour
     
 
 
-    public GameObject TilePrefab;
     public GameObject [,] AllDots { get =>m_allDots; }
     public int Width { get => m_width; }
     public int Height { get => m_height; }
@@ -47,6 +48,9 @@ public class Board : MonoBehaviour
             for (int j = 0; j < m_height; j++) 
             {
                 Vector2 tempPosition = new Vector2(i, j + m_offset);
+                Vector2 tilePosition = new Vector2(i, j);
+                GameObject backgroundTile = Instantiate(m_tilePrefab, tilePosition, Quaternion.identity);
+                backgroundTile.transform.parent = this.transform;
                 int dotToUse = Random.Range(0, m_dots.Length);
                 while (MatchesAt(i, j, m_dots[dotToUse]) ) 
                 {
