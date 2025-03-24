@@ -47,9 +47,9 @@ public class Board : MonoBehaviour
             for (int j = 0; j < m_height; j++) 
             {
                 Vector2 tempPosition = new Vector2(i, j + m_offset);
-                /*GameObject backGroundTile = Instantiate(TilePrefab, tempPosition, Quaternion.identity) as GameObject;
+                GameObject backGroundTile = Instantiate(TilePrefab, tempPosition, Quaternion.identity) as GameObject;
                 backGroundTile.transform.parent = transform;
-                backGroundTile.name = "( " + i + "," + j + ")";*/
+                backGroundTile.name = "( " + i + "," + j + ")";
                 int dotToUse = Random.Range(0, m_dots.Length);
                 while (MatchesAt(i, j, m_dots[dotToUse]) ) 
                 {
@@ -184,6 +184,7 @@ public class Board : MonoBehaviour
             DestroyMetches();
         }
         m_findMatches.CurrentMatches.Clear();
+        CurrentDot = null;
         yield return new WaitForSeconds(.5f);
         m_state = GamesState.move;
     }

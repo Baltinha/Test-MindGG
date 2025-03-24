@@ -65,6 +65,11 @@ public class FindMatches : MonoBehaviour
                         {
                             if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag)
                             {
+                                if (currentDot.GetComponent<Dot>().ColumnBomb || upDot.GetComponent<Dot>().ColumnBomb
+                                    || downDot.GetComponent<Dot>().ColumnBomb)
+                                {
+                                    m_currentMatches.Union(GetColumnPieces(i));
+                                }
                                 if (!m_currentMatches.Contains(upDot))
                                     m_currentMatches.Add(upDot);
                                 upDot.GetComponent<Dot>().Mactched = true;
@@ -118,19 +123,49 @@ public class FindMatches : MonoBehaviour
             if (m_board.CurrentDot.Mactched)
             {
                 m_board.CurrentDot.Mactched = false;
-                int typeOfBomb = Random.Range(0, 100);
+                /*int typeOfBomb = Random.Range(0, 100);
                 if (typeOfBomb <50)
+                    m_board.CurrentDot.MakeRowBomb();
+                
+                else if (typeOfBomb >= 50)
+                    m_board.CurrentDot.MakeColumnBomb();
+                */
+                if (m_board.CurrentDot.SwipeAngle > -45 && m_board.CurrentDot.SwipeAngle <= 45
+                    ||(m_board.CurrentDot.SwipeAngle < -135 || m_board.CurrentDot.SwipeAngle >= 135))
                 {
                     m_board.CurrentDot.MakeRowBomb();
                 }
-                else if (typeOfBomb >= 50)
+                else
                 {
                     m_board.CurrentDot.MakeColumnBomb();
                 }
             }
             else if (m_board.CurrentDot.OntherDot != null)
             {
+                Dot ontherDot = m_board.CurrentDot.OntherDot.GetComponent<Dot>();
+                if (ontherDot.Mactched) 
+                {
+                    /*
+                    ontherDot.Mactched = false;
+                    int typeOfBomb = Random.Range(0, 100);
 
+                    if (typeOfBomb < 50)
+                        ontherDot.MakeRowBomb();
+
+                    else if (typeOfBomb >= 50)
+                        ontherDot.MakeColumnBomb();
+                    */
+                    if (m_board.CurrentDot.SwipeAngle > -45 && m_board.CurrentDot.SwipeAngle <= 45
+                    || (m_board.CurrentDot.SwipeAngle < -135 || m_board.CurrentDot.SwipeAngle >= 135))
+                    {
+                        ontherDot.MakeRowBomb();
+                    }
+                    else
+                    {
+                        ontherDot.MakeColumnBomb();
+                    }
+
+                }
             }
         }
     }

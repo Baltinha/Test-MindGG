@@ -46,6 +46,9 @@ public class Dot : MonoBehaviour
     public int Colunm { get => m_colunm; set => m_colunm = value; }
 
     public GameObject OntherDot { get => m_otherDot; set => m_otherDot = value; }
+
+    public float SwipeAngle { get => m_swipeAngle; }
+
     #endregion
 
     // Start is called before the first frame update

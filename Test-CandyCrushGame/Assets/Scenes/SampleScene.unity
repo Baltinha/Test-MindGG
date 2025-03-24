@@ -159,7 +159,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.5647059, g: 0.61960787, b: 0.70980394, a: 0}
+  m_BackGroundColor: {r: 0.18867922, g: 0.18867922, b: 0.18867922, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -258,6 +258,7 @@ MonoBehaviour:
   - {fileID: 8310859027069727745, guid: 80da38ebf2c428e4387459d55836ca20, type: 3}
   - {fileID: 2204166049744609096, guid: dbf7fe0288f1dce4d9e62453ec3a8c13, type: 3}
   - {fileID: 3417275706673945269, guid: 23cf6172c490f314b98502343726d1ae, type: 3}
+  m_currentDot: {fileID: 0}
   TilePrefab: {fileID: 5499471152475144580, guid: 95d665192d988824794455c76bed6b8b, type: 3}
 --- !u!4 &1375617697
 Transform:
