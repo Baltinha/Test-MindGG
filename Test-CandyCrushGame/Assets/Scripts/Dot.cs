@@ -28,27 +28,24 @@ public class Dot : MonoBehaviour
     private FindMatches m_findMatches;
 
     [Header("PowerUps")]
+    bool m_iscolorBomb;
     [SerializeField] bool m_columnBomb;
     [SerializeField] bool m_rowBomb;
-    [SerializeField] GameObject rowArrow;
-    [SerializeField] GameObject columnArrow;
+    [SerializeField] GameObject m_rowArrow;
+    [SerializeField] GameObject m_columnArrow;
+    [SerializeField] GameObject m_colorBomb;
 
     #region Gets and Set
+    public bool ColorBomb { get => m_iscolorBomb; set => m_iscolorBomb = value; }
     public bool ColumnBomb { get => m_columnBomb; set => m_columnBomb = value; }
     public bool RowBomb { get => m_rowBomb; set => m_rowBomb = value; }
     public bool Mactched { get => m_mactched; set => m_mactched = value; }
     public int PreviousRow { get => m_previousRow; }
-
     public int Row { get => m_row; set => m_row = value; }
-
     public int PreviousColunm { get => m_previousColunm; }
-
     public int Colunm { get => m_colunm; set => m_colunm = value; }
-
     public GameObject OntherDot { get => m_otherDot; set => m_otherDot = value; }
-
     public float SwipeAngle { get => m_swipeAngle; }
-
     #endregion
 
     // Start is called before the first frame update
@@ -63,11 +60,18 @@ public class Dot : MonoBehaviour
     //Isso e para testa e debugar
     private void OnMouseOver()
     {
-        if (Input.GetMouseButtonDown(1))
+        /*if (Input.GetMouseButtonDown(1))
         {
             m_rowBomb = true;
-            GameObject arrow = Instantiate(rowArrow, transform.position, Quaternion.identity);
+            GameObject arrow = Instantiate(m_rowArrow, transform.position, Quaternion.identity);
             arrow.transform.parent = this.transform;
+        }*/
+        if (Input.GetMouseButtonDown(1))
+        {
+            m_iscolorBomb = true;
+            GameObject color = Instantiate(m_colorBomb, transform.position, Quaternion.identity);
+            color.transform.parent = this.transform;
+            m_board.AllDots[m_colunm, m_row].tag = "Rainbow Bomb";
         }
     }
 
@@ -82,7 +86,17 @@ public class Dot : MonoBehaviour
 
     public IEnumerator CheckMoveCo() 
     {
-        yield return new WaitForSeconds(.5f);
+        if (m_iscolorBomb) 
+        {
+            m_findMatches.BombColorPieces(OntherDot.tag);
+            m_mactched = true;
+        }
+        else if (m_otherDot.GetComponent<Dot>().m_iscolorBomb)
+        {
+            m_findMatches.BombColorPieces(gameObject.tag);
+            m_otherDot.GetComponent<Dot>().Mactched = true;
+        }
+            yield return new WaitForSeconds(.5f);
         if (m_otherDot != null)
         {
             if (!m_mactched && !m_otherDot.GetComponent<Dot>().m_mactched)
@@ -100,7 +114,6 @@ public class Dot : MonoBehaviour
                 m_board.DestroyMetches();
             }
 
-            //m_otherDot = null;
         }
 
     }
@@ -221,14 +234,22 @@ public class Dot : MonoBehaviour
     public void MakeRowBomb() 
     {
         m_rowBomb = true;
-        GameObject arrow = Instantiate(rowArrow, transform.position, Quaternion.identity);
+        GameObject arrow = Instantiate(m_rowArrow, transform.position, Quaternion.identity);
         arrow.transform.parent = this.transform;
     }
 
     public void MakeColumnBomb() 
     {
         m_columnBomb = true;
-        GameObject arrow = Instantiate(columnArrow, transform.position, Quaternion.identity);
+        GameObject arrow = Instantiate(m_columnArrow, transform.position, Quaternion.identity);
         arrow.transform.parent = this.transform;
+    }
+
+    public void MakeColorBomb() 
+    {
+        m_iscolorBomb = true;
+        GameObject color = Instantiate(m_colorBomb, transform.position, Quaternion.identity);
+        color.transform.parent = this.transform;
+        m_board.AllDots[m_colunm, m_row].tag = "Rainbow Bomb";
     }
 }

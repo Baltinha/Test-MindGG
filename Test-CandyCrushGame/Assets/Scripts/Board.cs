@@ -47,9 +47,6 @@ public class Board : MonoBehaviour
             for (int j = 0; j < m_height; j++) 
             {
                 Vector2 tempPosition = new Vector2(i, j + m_offset);
-                GameObject backGroundTile = Instantiate(TilePrefab, tempPosition, Quaternion.identity) as GameObject;
-                backGroundTile.transform.parent = transform;
-                backGroundTile.name = "( " + i + "," + j + ")";
                 int dotToUse = Random.Range(0, m_dots.Length);
                 while (MatchesAt(i, j, m_dots[dotToUse]) ) 
                 {
@@ -93,7 +90,8 @@ public class Board : MonoBehaviour
         {
             if (m_findMatches.CurrentMatches.Count == 4 || m_findMatches.CurrentMatches.Count == 7) 
                 m_findMatches.CheckBombs();
-            m_findMatches.CurrentMatches.Remove(m_allDots[Column,Row]);
+
+            
             GameObject Particle = Instantiate(m_destroyEffect, m_allDots[Column, Row].transform.position, Quaternion.identity);
             Destroy(Particle,.5f);
             Destroy(m_allDots[Column, Row]);
@@ -111,7 +109,8 @@ public class Board : MonoBehaviour
                     DestroyMatchesAt(i, j);
             }
         }
-       StartCoroutine(DecreaseRowCo());
+        m_findMatches.CurrentMatches.Clear();
+        StartCoroutine(DecreaseRowCo());
     }
 
     private IEnumerator DecreaseRowCo() 
