@@ -28,7 +28,7 @@ public class Dot : MonoBehaviour
     private FindMatches m_findMatches;
 
     [Header("PowerUps")]
-    bool m_iscolorBomb;
+    [SerializeField] bool m_iscolorBomb;
     [SerializeField] bool m_columnBomb;
     [SerializeField] bool m_rowBomb;
     [SerializeField] GameObject m_rowArrow;
@@ -39,7 +39,7 @@ public class Dot : MonoBehaviour
     public bool ColorBomb { get => m_iscolorBomb; set => m_iscolorBomb = value; }
     public bool ColumnBomb { get => m_columnBomb; set => m_columnBomb = value; }
     public bool RowBomb { get => m_rowBomb; set => m_rowBomb = value; }
-    public bool Mactched { get => m_mactched; set => m_mactched = value; }
+    public bool Matched { get => m_mactched; set => m_mactched = value; }
     public int PreviousRow { get => m_previousRow; }
     public int Row { get => m_row; set => m_row = value; }
     public int PreviousColunm { get => m_previousColunm; }
@@ -57,23 +57,7 @@ public class Dot : MonoBehaviour
         m_board = FindAnyObjectByType<Board>();
     }
 
-    //Isso e para testa e debugar
-    private void OnMouseOver()
-    {
-        /*if (Input.GetMouseButtonDown(1))
-        {
-            m_rowBomb = true;
-            GameObject arrow = Instantiate(m_rowArrow, transform.position, Quaternion.identity);
-            arrow.transform.parent = this.transform;
-        }*/
-        if (Input.GetMouseButtonDown(1))
-        {
-            m_iscolorBomb = true;
-            GameObject color = Instantiate(m_colorBomb, transform.position, Quaternion.identity);
-            color.transform.parent = this.transform;
-            m_board.AllDots[m_colunm, m_row].tag = "Rainbow Bomb";
-        }
-    }
+
 
     // Update is called once per frame
     void Update()
@@ -94,7 +78,7 @@ public class Dot : MonoBehaviour
         else if (m_otherDot.GetComponent<Dot>().m_iscolorBomb)
         {
             m_findMatches.BombColorPieces(gameObject.tag);
-            m_otherDot.GetComponent<Dot>().Mactched = true;
+            m_otherDot.GetComponent<Dot>().Matched = true;
         }
             yield return new WaitForSeconds(.5f);
         if (m_otherDot != null)

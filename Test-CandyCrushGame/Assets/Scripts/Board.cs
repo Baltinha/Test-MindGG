@@ -84,12 +84,51 @@ public class Board : MonoBehaviour
         return false;
     }
 
+
+    private void CheckToMakeBombs() 
+    {
+        if (m_findMatches.CurrentMatches.Count == 4 || m_findMatches.CurrentMatches.Count == 7)
+            m_findMatches.CheckBombs();
+
+        if (m_findMatches.CurrentMatches.Count == 5 || m_findMatches.CurrentMatches.Count == 8) 
+        {
+            if (m_currentDot != null)
+            {
+                if (m_currentDot.Matched)
+                {
+                    if (!m_currentDot.ColorBomb)
+                    {
+                        CurrentDot.Matched = false;
+                        CurrentDot.MakeColorBomb();
+                    }
+                }
+                else
+                {
+                    if (m_currentDot.OntherDot != null)
+                    {
+                        Dot otherDot = m_currentDot.OntherDot.GetComponent<Dot>();
+                        if (otherDot.Matched) 
+                        {
+                            if (!otherDot.ColorBomb)
+                            {
+                                otherDot.Matched = false;
+                                otherDot.MakeColorBomb();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+            
+             
+    }
+
     private void DestroyMatchesAt(int Column, int Row) 
     {
-        if (m_allDots[Column, Row].GetComponent<Dot>().Mactched)
+        if (m_allDots[Column, Row].GetComponent<Dot>().Matched)
         {
-            if (m_findMatches.CurrentMatches.Count == 4 || m_findMatches.CurrentMatches.Count == 7) 
-                m_findMatches.CheckBombs();
+            if (m_findMatches.CurrentMatches.Count >= 4) 
+                CheckToMakeBombs();
 
             
             GameObject Particle = Instantiate(m_destroyEffect, m_allDots[Column, Row].transform.position, Quaternion.identity);
@@ -105,8 +144,13 @@ public class Board : MonoBehaviour
         {
             for (int j=0; j < m_height; j++) 
             {
+                if (m_allDots[i,j].GetComponent<Dot>().ColumnBomb)
+                {
+
+                }
                 if (m_allDots[i,j] != null)
                     DestroyMatchesAt(i, j);
+
             }
         }
         m_findMatches.CurrentMatches.Clear();
@@ -163,7 +207,7 @@ public class Board : MonoBehaviour
             {
                 if (m_allDots[i, j] != null)
                 {
-                    if (m_allDots[i,j].GetComponent<Dot>().Mactched)
+                    if (m_allDots[i,j].GetComponent<Dot>().Matched)
                         return true;
                     
                 }
