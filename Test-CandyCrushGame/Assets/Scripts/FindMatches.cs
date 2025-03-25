@@ -5,6 +5,7 @@ using System.Linq;
 
 public class FindMatches : MonoBehaviour
 {
+    [Header("FindMaches")]
     private Board m_board;
     [SerializeField]private List<GameObject> m_currentMatches = new List<GameObject>();
      
@@ -24,19 +25,16 @@ public class FindMatches : MonoBehaviour
     {
         List<GameObject> currentDots = new List<GameObject>();
         if (dot1.RowBomb)
-        {
             m_currentMatches.Union(GetRowPieces(dot1.Row));
-        }
+        
 
         if (dot2.RowBomb)
-        {
             m_currentMatches.Union(GetRowPieces(dot2.Row));
-        }
+        
 
         if (dot3.RowBomb)
-        {
             m_currentMatches.Union(GetRowPieces(dot3.Row));
-        }
+        
         return currentDots;
     }
 
@@ -44,28 +42,24 @@ public class FindMatches : MonoBehaviour
     {
         List<GameObject> currentDots = new List<GameObject>();
         if (dot1.ColumnBomb)
-        {
             m_currentMatches.Union(GetColumnPieces(dot1.Colunm));
-        }
+        
 
         if (dot2.ColumnBomb)
-        {
             m_currentMatches.Union(GetColumnPieces(dot2.Colunm));
-        }
+        
 
         if (dot3.ColumnBomb)
-        {
             m_currentMatches.Union(GetColumnPieces(dot3.Colunm));
-        }
+        
         return currentDots;
     }
 
     private void AddToListAndMatch(GameObject dot)
     {
         if (!m_currentMatches.Contains(dot))
-        {
             m_currentMatches.Add(dot);
-        }
+        
         dot.GetComponent<Dot>().Matched = true;
     }
 

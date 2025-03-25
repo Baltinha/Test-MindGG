@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum GamesState 
 {
@@ -22,19 +24,26 @@ public class Board : MonoBehaviour
     private GameObject[,] m_allDots;
     [SerializeField]Dot m_currentDot;
     private FindMatches m_findMatches;
-    
+
+    [Header("Points")]
+    [SerializeField] int m_basePointsValue = 20;
+    [SerializeField] int m_streakValue = 1;
+    private ScoreManager m_scoreManager;
 
 
+
+    #region Gets and Set
     public GameObject [,] AllDots { get =>m_allDots; }
     public int Width { get => m_width; }
     public int Height { get => m_height; }
     public GamesState State { get => m_state; set => m_state = value; }
 
     public Dot CurrentDot { get => m_currentDot; set => m_currentDot = value; }
-
+    #endregion
     // Start is called before the first frame update
     void Start()
     {
+       m_scoreManager = FindAnyObjectByType<ScoreManager>();
        m_findMatches = FindFirstObjectByType<FindMatches>();
        m_allTiles = new BackgroundTile[m_width, m_height];
        m_allDots = new GameObject[m_width, m_height];
@@ -46,7 +55,8 @@ public class Board : MonoBehaviour
         for (int i = 0; i < m_width; i++)
         {
             for (int j = 0; j < m_height; j++) 
-            {
+            { 
+                //Coloca o fundo tranparente 
                 Vector2 tempPosition = new Vector2(i, j + m_offset);
                 Vector2 tilePosition = new Vector2(i, j);
                 GameObject backgroundTile = Instantiate(m_tilePrefab, tilePosition, Quaternion.identity);
@@ -71,19 +81,17 @@ public class Board : MonoBehaviour
     private bool MatchesAt(int Colunm, int Row, GameObject Piece) 
     {
         if (Colunm > 1) 
-        {
             if (m_allDots[Colunm -1 , Row].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag
                 && m_allDots[Colunm - 2, Row].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag)
                 return true;
             
-        }
+        
         if (Row > 1) 
-        {
             if (m_allDots[Colunm, Row - 1].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag 
                 && m_allDots[Colunm, Row - 2].GetComponent<Dot>().tag == Piece.GetComponent<Dot>().tag)
                 return true;
-            
-        }
+           
+        
 
         return false;
     }
@@ -138,6 +146,7 @@ public class Board : MonoBehaviour
             GameObject Particle = Instantiate(m_destroyEffect, m_allDots[Column, Row].transform.position, Quaternion.identity);
             Destroy(Particle,.5f);
             Destroy(m_allDots[Column, Row]);
+            m_scoreManager.IncreaseScore(m_basePointsValue * m_streakValue);
             m_allDots[Column, Row] = null;
         }
     }
@@ -145,18 +154,11 @@ public class Board : MonoBehaviour
     public void DestroyMetches() 
     {
         for (int i = 0; i < m_width; i++) 
-        {
             for (int j=0; j < m_height; j++) 
-            {
-                if (m_allDots[i,j].GetComponent<Dot>().ColumnBomb)
-                {
-
-                }
                 if (m_allDots[i,j] != null)
                     DestroyMatchesAt(i, j);
-
-            }
-        }
+            
+        
         m_findMatches.CurrentMatches.Clear();
         StartCoroutine(DecreaseRowCo());
     }
@@ -210,11 +212,8 @@ public class Board : MonoBehaviour
             for (int j = 0; j < m_height; j++)
             {
                 if (m_allDots[i, j] != null)
-                {
                     if (m_allDots[i,j].GetComponent<Dot>().Matched)
-                        return true;
-                    
-                }
+                        return true;  
             }
         }
         return false;
@@ -227,6 +226,7 @@ public class Board : MonoBehaviour
 
         while (MatchesOnBoard()) 
         {
+            m_streakValue ++;
             yield return new WaitForSeconds(.5f);
             DestroyMetches();
         }
@@ -234,6 +234,8 @@ public class Board : MonoBehaviour
         CurrentDot = null;
         yield return new WaitForSeconds(.5f);
         m_state = GamesState.move;
+        m_streakValue = 1;
     }
+
 
 }

@@ -18,7 +18,7 @@ public class Dot : MonoBehaviour
     private Vector2 m_fristPositionTouch;
     private Vector2 m_finalDirectionTouch;
     private Vector2 m_tempTargetPos;
-    private float m_swipeResist = 1f;
+    [SerializeField] private float m_swipeResist = 1f;
     [SerializeField] float m_lerpVelocity = 0;
     [SerializeField] float m_swipeAngle = 0;
     [SerializeField] float m_canMoveT = 0;
@@ -57,23 +57,6 @@ public class Dot : MonoBehaviour
         m_board = FindAnyObjectByType<Board>();
     }
 
-    //Isso e para testa e debugar
-    private void OnMouseOver()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            m_columnBomb = true;
-            GameObject arrow = Instantiate(m_columnArrow, transform.position, Quaternion.identity);
-            arrow.transform.parent = this.transform;
-        }
-        /*if (Input.GetMouseButtonDown(1))
-        {
-            m_iscolorBomb = true;
-            GameObject color = Instantiate(m_colorBomb, transform.position, Quaternion.identity);
-            color.transform.parent = this.transform;
-            m_board.AllDots[m_colunm, m_row].tag = "Rainbow Bomb";
-        }*/
-    }
 
     // Update is called once per frame
     void Update()
