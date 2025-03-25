@@ -66,6 +66,16 @@ public class Dot : MonoBehaviour
         MovingDots();
 
     }
+    //Area para testar as mecanicas
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            m_iscolorBomb = true;
+            GameObject MecanicTest = Instantiate(m_colorBomb, transform.position, Quaternion.identity);
+            MecanicTest.transform.parent = this.transform;
+        }
+    }
 
     public IEnumerator CheckMoveCo() 
     {
